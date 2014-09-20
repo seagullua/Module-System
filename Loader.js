@@ -3,16 +3,21 @@ var verbose = false;
 var fs = require('fs');
 var path = require('path');
 
+/**
+ * Module names should be uppercased
+ * @param name
+ */
+function isModuleName(name) {
+    var first_letter = name[0];
+    return name != '_' && first_letter && first_letter == first_letter.toUpperCase();
+}
 
 function ModuleCache(root) {
     var cache = {};
-//    var function_cache = function(){
-//        parent.onCall(arguments);
-//    };
     var function_cache = {};
 
     function loadModule(name) {
-        if(name != '_') {
+        if(isModuleName(name)) {
             var module = new Module(path.join(root, name));
             if(module.isValid()) {
                 cache[name] = module;
@@ -89,22 +94,28 @@ function Module(dir) {
                 functions[key] = module[key];
             }
         }
-        //console.log(dirname, functions);
-        if(!fs.existsSync(dir)) {
-            return;
-        }
-        var files = fs.readdirSync(dir);
-        for(var i=0; i<files.length; ++i) {
-            var file = files[i];
-            if(file != 'frontend') {
-                var full_path = path.join(dir, files[i]);
-                if(fs.statSync(full_path).isDirectory()) {
-                    var name = path.basename(file);
-                    functions[name] = loadDirCode(full_path);
+
+        function loadJSFiles(dir) {
+            if(!fs.existsSync(dir)) {
+                return;
+            }
+            var files = fs.readdirSync(dir);
+            for(var i=0; i<files.length; ++i) {
+                var file = files[i];
+                if(file != 'frontend' && file != '_' && !isModuleName(file)) {
+                    var full_path = path.join(dir, files[i]);
+                    if(fs.statSync(full_path).isDirectory()) {
+                        var name = path.basename(file);
+                        functions[name] = loadDirCode(full_path);
+                    }
                 }
             }
         }
 
+        //From root
+        loadJSFiles(dirname);
+        //From _ folder
+        loadJSFiles(dir);
     }
 
     this.isValid = function() {
@@ -116,7 +127,6 @@ function Module(dir) {
     }
 
     this.getFunctions = function() {
-        //console.log(dirname, functions);
         return functions;
     }
 }
@@ -153,6 +163,7 @@ global.include = function(name) {
         res = module.getFunctions();
     }
 
+    console.log("M: ",name);
     quick_cache[name] = res;
     return res;
 }
