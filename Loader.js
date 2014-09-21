@@ -4,6 +4,12 @@ var fs = require('fs');
 var path = require('path');
 
 /**
+ * Different loaders for different paths
+ * @type {{}}
+ */
+var loaders = {};
+var default_loader;
+/**
  * Module names should be uppercased
  * @param name
  */
@@ -12,13 +18,17 @@ function isModuleName(name) {
     return name != '_' && first_letter && first_letter == first_letter.toUpperCase();
 }
 
-function ModuleCache(root) {
+function ModuleCache(root, package_name) {
     var cache = {};
     var function_cache = {};
 
     function loadModule(name) {
         if(isModuleName(name)) {
-            var module = new Module(path.join(root, name));
+            var module_name = name;
+            if(package_name) {
+                module_name = package_name + "/" + name;
+            }
+            var module = new Module(path.join(root, name), module_name);
             if(module.isValid()) {
                 cache[name] = module;
                 module.init();
@@ -41,39 +51,14 @@ function ModuleCache(root) {
     }
 }
 
-function loadDirCode(dir) {
-    var result = {};
-    var index_file = path.join(dir, 'index.js');
-
-    if(verbose) {
-        console.log("[M] Read Dir: ", dir);
-    }
-    if(fs.existsSync(index_file)) {
-        result = require(index_file);
-    }
-    var files = fs.readdirSync(dir);
-    for(var i=0; i<files.length; ++i) {
-        var file = files[i];
-        if(file != 'index.js') {
-            file = path.join(dir, file);
-            var ext = path.extname(file);
-            if(ext == ".js") {
-                var name = path.basename(file, ext);
-                result[name] = require(file);
-            }
-        }
-    }
-
-    return result;
-}
-
-function Module(dir) {
+function Module(dir, module_name) {
     if(verbose) {
         console.log("[M] Loading: ", dir);
     }
+
     var index_file = path.join(dir, 'launch.js');
     var is_loaded = fs.existsSync(dir);
-    var submodules = new ModuleCache(dir);
+    var submodules = new ModuleCache(dir, module_name);
     var functions = submodules.getFunctions();
 
     if(!is_loaded) {
@@ -81,6 +66,11 @@ function Module(dir) {
     }
 
     var dirname = dir;
+    var me = this;
+    this.getName = function() {
+        return module_name;
+    }
+
     this.init = function() {
         var dir = path.join(dirname, '_');
         var index = path.join(dirname, 'index.js');
@@ -95,6 +85,7 @@ function Module(dir) {
             }
         }
 
+        //Load module subfolders
         function loadJSFiles(dir) {
             if(!fs.existsSync(dir)) {
                 return;
@@ -102,11 +93,20 @@ function Module(dir) {
             var files = fs.readdirSync(dir);
             for(var i=0; i<files.length; ++i) {
                 var file = files[i];
-                if(file != 'frontend' && file != '_' && !isModuleName(file)) {
+                //console.log(file);
+                if(!isModuleName(file)) {
                     var full_path = path.join(dir, files[i]);
                     if(fs.statSync(full_path).isDirectory()) {
+                        var loaded;
                         var name = path.basename(file);
-                        functions[name] = loadDirCode(full_path);
+                        if(file in loaders) {
+                            loaded = loaders[file].load(full_path, me);
+                        } else {
+                            loaded = default_loader.load(full_path, me);
+                        }
+                        if(loaded) {
+                            functions[name] = loaded;
+                        }
                     }
                 }
             }
@@ -176,11 +176,26 @@ function setRootPath(path) {
     root_path = path;
 }
 
+function setPathLoader(path_name, module_name) {
+    loaders[path_name] = include(module_name);
+}
+
 function makeVerbose() {
     verbose = true;
 }
 
+function load() {
+    default_loader = include('System/Loaders/Default');
+    setPathLoader('_', 'System/Loaders/None');
+    setPathLoader('frontend_js', 'System/Loaders/None');
+    setPathLoader('frontend_less', 'System/Loaders/None');
+    setPathLoader('frontend_files', 'System/Loaders/None');
+    setPathLoader('views', 'System/Loaders/View');
+}
+
 module.exports = {
     setRootPath: setRootPath,
-    makeVerbose: makeVerbose
+    makeVerbose: makeVerbose,
+    setPathLoader: setPathLoader,
+    load: load
 };
