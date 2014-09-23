@@ -2,10 +2,11 @@
 
 var fs = require('fs');
 var path = require('path');
+var config = include('Core/Config');
 
 exports.load = function(dir) {
 
-    var config = include('Core/Config');
+
 
     //get previous data from file
     var less_file_name = path.join(config.less_main_files,"main.less");

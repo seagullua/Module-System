@@ -2,38 +2,33 @@
 
 var fs = require('fs');
 var path = require('path');
-var mkdirp = require('mkdirp');
+var fse = require('fs-extra');
 var ncp = require('ncp').ncp;
 ncp.limit = 16;
+var Config = include('Core/Config');
 
-exports.load = function(dir) {
-
-    var config = include('Core/Config');
+exports.load = function(dir, module) {
 
     //get folder for JS files
-    var common_images_folder_path = config.images_files;
+    var common_images_folder_path = Config.images_files.path;
     //get long path for this JS file
-    var this_images_file_path = path.join(common_images_folder_path, dir);
+    var this_images_file_path = dir;
+
+    var target_path = path.join(module.getRootPath(), common_images_folder_path, module.getName());
+
 
     //create folder for current JS file
-    mkdirp(this_images_file_path);
+    fse.ensureDirSync(target_path);
 
     //get all JS files from this module and copy to new place
-    var file_data;
-    var file_disk = path.join(dir, 'frontend/images/');
-    var file_names = fs.readdirSync(file_disk);
-    for(var i=0; i<file_names.length; i++) {
-        //copy file to new folder
-        //first arg - source
-        //second - destination
-        //TODO: id destination file name correct?
-        ncp(path.join(file_disk, file_names[i]),
-            this_js_file_path,
-            function (err) {
-                if (err) {
-                    return console.log(err);
-                }
-                console.log('done!');
-            });
+    ncp(this_images_file_path, target_path, function (err) {
+        if (err) {
+            return console.error("Can't copy files: ", err);
+        }
+    });
+
+    var prefix = Config.server.urlcontent + Config.images_files.url + '/' + module.getName() + '/';
+    return function(url) {
+        return prefix + url;
     }
 }

@@ -129,6 +129,10 @@ function Module(dir, module_name) {
     this.getFunctions = function() {
         return functions;
     }
+
+    this.getRootPath = function() {
+        return root_path;
+    }
 }
 
 var cache;
@@ -187,9 +191,9 @@ function makeVerbose() {
 function load() {
     default_loader = include('System/Loaders/Default');
     setPathLoader('_', 'System/Loaders/None');
-    setPathLoader('frontend_js', 'System/Loaders/None');
-    setPathLoader('frontend_less', 'System/Loaders/None');
-    setPathLoader('frontend_files', 'System/Loaders/None');
+    setPathLoader('frontend_js', 'System/Loaders/JS');
+    setPathLoader('frontend_less', 'System/Loaders/Less');
+    setPathLoader('frontend_files', 'System/Loaders/Images');
     setPathLoader('views', 'System/Loaders/View');
 }
 

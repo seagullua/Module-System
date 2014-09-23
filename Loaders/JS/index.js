@@ -1,39 +1,48 @@
-//ideology for JS files
+//ideology for Images files
 
 var fs = require('fs');
 var path = require('path');
-var mkdirp = require('mkdirp');
+var fse = require('fs-extra');
 var ncp = require('ncp').ncp;
 ncp.limit = 16;
+var Config = include('Core/Config');
+var UglifyJS = require('uglify-js');
 
-exports.load = function(dir) {
-
-    var config = include('Core/Config');
+exports.load = function(dir, module) {
 
     //get folder for JS files
-    var common_js_folder_path = config.js_files;
+    var common_images_folder_path = Config.js_files.path;
     //get long path for this JS file
-    var this_js_file_path = path.join(common_js_folder_path, dir);
+    var this_images_file_path = dir;
+
+    var target_path = path.join(module.getRootPath(), common_images_folder_path, module.getName());
+
 
     //create folder for current JS file
-    mkdirp(this_js_file_path);
+    fse.ensureDirSync(target_path);
 
-    //get all JS files from this module and copy to new place
-    var file_data;
-    var file_disk = path.join(dir, 'frontend/JS/');
-    var file_names = fs.readdirSync(file_disk);
-    for(var i=0; i<file_names.length; i++) {
-        //copy file to new folder
-        //first arg - source
-        //second - destination
-        //TODO: id destination file name correct?
-        ncp(path.join(file_disk, file_names[i]),
-            this_js_file_path,
-            function (err) {
-            if (err) {
-                return console.log(err);
+    var files = fs.readdirSync(dir);
+    for(var i=0; i<files.length; ++i) {
+        var js = files[i];
+        var ext = path.extname(js);
+        if(ext == ".js") {
+            var base_name = path.basename(js, ext);
+            if(path.extname(base_name) != ".min") {
+                var map_name = js + ".map";
+                var result = UglifyJS.minify(path.join(dir, js), {
+                    outSourceMap: map_name
+                });
+                fse.writeFileSync(path.join(target_path, js), result.code);
+                fse.writeFileSync(path.join(target_path, map_name), result.map);
+                //Minify this file
+            } else {
+                fse.copySync(path.join(dir, js), path.join(target_path, js));
             }
-            console.log('done!');
-        });
+        }
+    }
+
+    var prefix = Config.server.urlcontent + Config.js_files.url + '/' + module.getName() + '/';
+    return function(url) {
+        return prefix + url;
     }
 }
