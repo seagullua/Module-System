@@ -36,7 +36,7 @@ exports.createCssFile = function() {
     fse.ensureDirSync(dir);
 
     global_less = global_less.split('\\').join('/');
-    less.render(global_less, function (e, data) {
+    less.render(global_less, {compress: true}, function (e, data) {
         if(e) {
             return console.error("Less error: ", e)
         }
