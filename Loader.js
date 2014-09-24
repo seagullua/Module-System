@@ -4,6 +4,16 @@ var fs = require('fs');
 var path = require('path');
 
 /**
+ * The list of functions to be called to init modules
+ * @type {{modules: Array, routers: Array, error_handlers: Array}}
+ */
+var launchers = {
+    modules: [],
+    routers: [],
+    error_handlers: []
+};
+
+/**
  * Different loaders for different paths
  * @type {{}}
  */
@@ -81,7 +91,16 @@ function Module(dir, module_name) {
             var module = require(index);
 
             for(var key in module) {
-                functions[key] = module[key];
+                var func = module[key];
+                if(key == "configureModules") {
+                    launchers.modules.push(func);
+                } else if(key == "configureRouters") {
+                    launchers.routers.push(func);
+                } else if(key == "configureErrorHandlers") {
+                    launchers.error_handlers.push(func);
+                } else {
+                    functions[key] = func;
+                }
             }
         }
 
@@ -197,9 +216,31 @@ function load() {
     setPathLoader('views', 'System/Loaders/View');
 }
 
+function configureModules(app) {
+    for(var i=0; i<launchers.modules.length; ++i) {
+        launchers.modules[i](app);
+    }
+}
+
+function configureRouters(app) {
+    for(var i=0; i<launchers.routers.length; ++i) {
+        launchers.routers[i](app);
+    }
+}
+
+function configureErrorHandlers(app) {
+    var length = launchers.error_handlers.length;
+    for(var i=0; i<length; ++i) {
+        launchers.error_handlers[length-i-1](app);
+    }
+}
+
 module.exports = {
     setRootPath: setRootPath,
     makeVerbose: makeVerbose,
     setPathLoader: setPathLoader,
-    load: load
+    load: load,
+    configureModules: configureModules,
+    configureRouters: configureRouters,
+    configureErrorHandlers: configureErrorHandlers
 };
