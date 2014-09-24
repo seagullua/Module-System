@@ -1,6 +1,7 @@
 //ideology for Views files
 function ViewModule(module, file_name) {
-
+    this.file = file_name;
+    this.module = module.getFunctions();
 }
 var express = require('express');
 var path = require('path');
@@ -15,8 +16,11 @@ var res = express.response;
 res.defaultRender = res.render;
 res.render = function(view, options, fn){
     if(view instanceof ViewModule) {
-        //Render view module
-        console.log("Custom renderer");
+        options = options || {};
+        for(var key in view.module) {
+            options[key] = view.module[key];
+        }
+        this.defaultRender(view.file, options, fn);
     } else {
         this.defaultRender(view, options, fn);
     }
