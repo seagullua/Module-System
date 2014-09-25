@@ -46,3 +46,5 @@ exports.load = function(dir, module) {
         return prefix + url;
     }
 }
+
+exports.name = 'js';

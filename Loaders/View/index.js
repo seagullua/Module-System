@@ -12,6 +12,8 @@ exports.load = function(dir, module) {
     }
 }
 
+exports.name = 'view';
+
 var res = express.response;
 res.defaultRender = res.render;
 res.render = function(view, options, fn){

@@ -119,7 +119,11 @@ function Module(dir, module_name) {
                         var loaded;
                         var name = path.basename(file);
                         if(file in loaders) {
-                            loaded = loaders[file].load(full_path, me);
+                            var loader = loaders[file];
+                            loaded = loader.load(full_path, me);
+                            if('name' in loader && loader.name) {
+                                name = loader.name;
+                            }
                         } else {
                             loaded = default_loader.load(full_path, me);
                         }
