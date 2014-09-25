@@ -218,6 +218,7 @@ function load() {
     setPathLoader('frontend_less', 'System/Loaders/Less');
     setPathLoader('frontend_files', 'System/Loaders/Images');
     setPathLoader('views', 'System/Loaders/View');
+    setPathLoader('locales', 'System/Loaders/Locale');
 }
 
 function configureModules(app) {
