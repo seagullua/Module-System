@@ -10,6 +10,7 @@ var path = require('path');
 var launchers = {
     modules: [],
     routers: [],
+    middleware: [],
     error_handlers: []
 };
 
@@ -98,6 +99,8 @@ function Module(dir, module_name) {
                     launchers.routers.push(func);
                 } else if(key == "configureErrorHandlers") {
                     launchers.error_handlers.push(func);
+                } else if(key == "configureMiddleware") {
+                    launchers.middleware.push(func);
                 } else {
                     functions[key] = func;
                 }
@@ -233,6 +236,13 @@ function configureRouters(app) {
     }
 }
 
+function configureMiddleware(app) {
+    for(var i=0; i<launchers.middleware.length; ++i) {
+        launchers.middleware[i](app);
+    }
+}
+
+
 function configureErrorHandlers(app) {
     var length = launchers.error_handlers.length;
     for(var i=0; i<length; ++i) {
@@ -247,5 +257,6 @@ module.exports = {
     load: load,
     configureModules: configureModules,
     configureRouters: configureRouters,
-    configureErrorHandlers: configureErrorHandlers
+    configureErrorHandlers: configureErrorHandlers,
+    configureMiddleware: configureMiddleware
 };
