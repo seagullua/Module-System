@@ -26,13 +26,12 @@ exports.load = function(dir, module) {
     global_less += file_data;
 }
 
-exports.createCssFile = function() {
+function createCssFile() {
     if(!target_file) {
         return;
     }
     var file = target_file;
     var dir = path.dirname(file);
-
     fse.ensureDirSync(dir);
 
     global_less = global_less.split('\\').join('/');
@@ -43,3 +42,9 @@ exports.createCssFile = function() {
         fse.writeFileSync(file, data);
     });
 }
+
+exports.configureBeforeLaunch = function() {
+    console.log("Creating LESS...");
+    createCssFile();
+}
+exports.createCssFile = createCssFile;

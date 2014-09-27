@@ -11,7 +11,8 @@ var launchers = {
     modules: [],
     routers: [],
     middleware: [],
-    error_handlers: []
+    error_handlers: [],
+    before_launch: []
 };
 
 /**
@@ -101,6 +102,8 @@ function Module(dir, module_name) {
                     launchers.error_handlers.push(func);
                 } else if(key == "configureMiddleware") {
                     launchers.middleware.push(func);
+                } else if(key == "configureBeforeLaunch") {
+                    launchers.before_launch.push(func);
                 } else {
                     functions[key] = func;
                 }
@@ -242,6 +245,12 @@ function configureMiddleware(app) {
     }
 }
 
+function configureBeforeLaunch(app) {
+    for(var i=0; i<launchers.before_launch.length; ++i) {
+        launchers.before_launch[i](app);
+    }
+}
+
 
 function configureErrorHandlers(app) {
     var length = launchers.error_handlers.length;
@@ -258,5 +267,6 @@ module.exports = {
     configureModules: configureModules,
     configureRouters: configureRouters,
     configureErrorHandlers: configureErrorHandlers,
-    configureMiddleware: configureMiddleware
+    configureMiddleware: configureMiddleware,
+    configureBeforeLaunch: configureBeforeLaunch
 };
