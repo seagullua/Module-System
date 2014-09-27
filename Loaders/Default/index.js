@@ -21,7 +21,7 @@ exports.load = function(dir) {
         }
     }
 
-    console.log('Default module= '+result);
+    //console.log('Default module= '+result);
     return result;
 
 }
