@@ -225,6 +225,7 @@ function load() {
     setPathLoader('frontend_files', 'System/Loaders/Images');
     setPathLoader('views', 'System/Loaders/View');
     setPathLoader('locales', 'System/Loaders/Locale');
+    setPathLoader('urls', 'System/Loaders/Urls');
 }
 
 function configureModules(app) {
