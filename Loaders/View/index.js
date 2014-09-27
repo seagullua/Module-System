@@ -14,21 +14,20 @@ exports.load = function(dir, module) {
 
 exports.name = 'view';
 
+function viewFileName(view) {
+    if(view instanceof ViewModule) {
+        return view.file;
+    } else {
+        return view;
+    }
+}
+
 var res = express.response;
 res.defaultRender = res.render;
 res.render = function(view, options, fn){
-    if(view instanceof ViewModule) {
-        options = options || {};
-        for(var key in view.module) {
-            options[key] = view.module[key];
-        }
-        this.defaultRender(view.file, options, fn);
-    } else {
-        this.defaultRender(view, options, fn);
-    }
+    this.defaultRender(viewFileName(view), options, fn);
 };
-
-
+exports.viewFileName = viewFileName;
 exports.configureModules = function(app) {
     app.set('view engine', 'ejs');
 }

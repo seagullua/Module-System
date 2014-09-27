@@ -74,7 +74,7 @@ function Module(dir, module_name) {
     var functions = submodules.getFunctions();
 
     if(!is_loaded) {
-        console.error('[Module] Not found: ', dir);
+        throw new Error('[Module] Not found: '+ dir);
     }
 
     var dirname = dir;

@@ -41,7 +41,7 @@ exports.load = function(dir, module) {
         }
     }
 
-    var prefix = Config.server.urlcontent + Config.js_files.url + '/' + module.getName() + '/';
+    var prefix = Config.js_files.url + '/' + module.getName() + '/';
     return function(url) {
         return prefix + url;
     }
