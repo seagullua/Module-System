@@ -27,3 +27,8 @@ res.render = function(view, options, fn){
         this.defaultRender(view, options, fn);
     }
 };
+
+
+exports.configureModules = function(app) {
+    app.set('view engine', 'ejs');
+}
