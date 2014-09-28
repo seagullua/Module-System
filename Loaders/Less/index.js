@@ -17,9 +17,12 @@ exports.load = function(dir, module) {
     var file_disk = dir;
     var file_names = fs.readdirSync(file_disk);
     for(var i=0; i<file_names.length; i++) {
-        file_data += '\n@import "';
-        file_data += path.join(file_disk, file_names[i]);
-        file_data += '";\n';
+        var name = file_names[i];
+        if(path.extname(name) == ".less") {
+            file_data += '\n@import "';
+            file_data += path.join(file_disk, name);
+            file_data += '";\n';
+        }
     }
 
 
@@ -48,3 +51,12 @@ exports.configureBeforeLaunch = function() {
     createCssFile();
 }
 exports.createCssFile = createCssFile;
+
+var Urls = include('Core/Urls');
+var Config = include('Core/Config');
+exports.configureModules = function(app) {
+    Urls.addUrl('urlMainCss', function()
+    {
+        return Config.server.urlcontent + Config.less_main_files.url
+    });
+}
