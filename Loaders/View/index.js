@@ -25,6 +25,7 @@ function viewFileName(view) {
 var res = express.response;
 res.defaultRender = res.render;
 res.render = function(view, options, fn){
+    options.ME = view.module;
     this.defaultRender(viewFileName(view), options, fn);
 };
 exports.viewFileName = viewFileName;
