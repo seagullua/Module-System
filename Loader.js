@@ -226,6 +226,7 @@ function load() {
     setPathLoader('views', 'System/Loaders/View');
     setPathLoader('locales', 'System/Loaders/Locale');
     setPathLoader('urls', 'System/Loaders/Urls');
+    setPathLoader('db', 'System/Loaders/Mongoose');
 }
 
 function configureModules(app) {
