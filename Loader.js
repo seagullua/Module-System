@@ -62,6 +62,18 @@ function ModuleCache(root, package_name) {
         return function_cache;
     }
 }
+var _dependencies = [];
+function addDependencies(deps) {
+    for(var i in deps) {
+        _dependencies.push(deps[i]);
+    }
+}
+
+function loadDependencies() {
+    for(var i=0; i<_dependencies.length; ++i) {
+        include(_dependencies[i]);
+    }
+}
 
 function Module(dir, module_name) {
     if(verbose) {
@@ -104,6 +116,8 @@ function Module(dir, module_name) {
                     launchers.middleware.push(func);
                 } else if(key == "configureBeforeLaunch") {
                     launchers.before_launch.push(func);
+                } else if(key == "depends") {
+                    addDependencies(func);
                 } else {
                     functions[key] = func;
                 }
@@ -270,5 +284,6 @@ module.exports = {
     configureRouters: configureRouters,
     configureErrorHandlers: configureErrorHandlers,
     configureMiddleware: configureMiddleware,
-    configureBeforeLaunch: configureBeforeLaunch
+    configureBeforeLaunch: configureBeforeLaunch,
+    loadDependencies: loadDependencies
 };
