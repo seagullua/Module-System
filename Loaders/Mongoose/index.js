@@ -42,8 +42,10 @@ exports.load = function(dir, module) {
                 schema.schema.add(option);
             }
             db_object[schema.name] = func;
+            if(!schema.noModel) {
+                schemes.push(schema);
+            }
 
-            schemes.push(schema);
         }
 
     }
