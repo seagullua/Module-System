@@ -234,13 +234,7 @@ function makeVerbose() {
 function load() {
     default_loader = include('System/Loaders/Default');
     setPathLoader('_', 'System/Loaders/None');
-    setPathLoader('frontend_js', 'System/Loaders/JS');
-    setPathLoader('frontend_less', 'System/Loaders/Less');
-    setPathLoader('frontend_files', 'System/Loaders/Images');
-    setPathLoader('views', 'System/Loaders/View');
-    setPathLoader('locales', 'System/Loaders/Locale');
-    setPathLoader('urls', 'System/Loaders/Urls');
-    setPathLoader('db', 'System/Loaders/Mongoose');
+
 }
 
 function configureModules(app) {
