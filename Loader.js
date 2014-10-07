@@ -56,11 +56,11 @@ function ModuleCache(root, package_name) {
             loadModule(name);
         }
         return cache[name];
-    }
+    };
 
     this.getFunctions = function() {
         return function_cache;
-    }
+    };
 }
 var _dependencies = [];
 function addDependencies(deps) {
@@ -93,7 +93,7 @@ function Module(dir, module_name) {
     var me = this;
     this.getName = function() {
         return module_name;
-    }
+    };
 
     this.init = function() {
         var dir = path.join(dirname, '_');
@@ -159,23 +159,23 @@ function Module(dir, module_name) {
         loadJSFiles(dirname);
         //From _ folder
         loadJSFiles(dir);
-    }
+    };
 
     this.isValid = function() {
         return is_loaded;
-    }
+    };
 
     this.getModule = function(name) {
         return submodules.getModule(name);
-    }
+    };
 
     this.getFunctions = function() {
         return functions;
-    }
+    };
 
     this.getRootPath = function() {
         return root_path;
-    }
+    };
 }
 
 var cache;
@@ -213,7 +213,7 @@ global.include = function(name) {
     console.log("M: ",name);
     quick_cache[name] = res;
     return res;
-}
+};
 
 /**
  * Sets the path where modules are located

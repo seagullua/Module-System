@@ -12,7 +12,7 @@ function TranslationCache() {
         }
 
         storage[lang] = map;
-    }
+    };
 
     this.exportLocale = function(locale) {
         for(var lang in storage) {
@@ -26,7 +26,7 @@ function TranslationCache() {
                 target[key] = source[key];
             }
         }
-    }
+    };
 }
 
 var i18n = require("i18n");
@@ -49,5 +49,5 @@ exports.load = function(dir) {
     }
 
     cache.exportLocale(i18n.locales);
-}
+};
 exports.name = "locale";

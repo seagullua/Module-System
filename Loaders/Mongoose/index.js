@@ -40,7 +40,7 @@ exports.load = function(dir, module) {
             func.name = schema.name;
             func.add = function(option) {
                 schema.schema.add(option);
-            }
+            };
             db_object[schema.name] = func;
             if(!schema.noModel) {
                 schemes.push(schema);
@@ -72,7 +72,7 @@ exports.load = function(dir, module) {
         }
     }
     return db_object;
-}
+};
 
 exports.name = 'db';
 
@@ -84,4 +84,4 @@ exports.configureBeforeLaunch = function() {
 
         schema.model = mongoose.model(schema.name, schema.schema);
     }
-}
+};

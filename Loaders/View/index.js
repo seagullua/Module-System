@@ -9,8 +9,8 @@ var path = require('path');
 exports.load = function(dir, module) {
     return function(file_name) {
         return new ViewModule(module, path.join(dir, file_name));
-    }
-}
+    };
+};
 
 exports.name = 'view';
 
@@ -31,4 +31,4 @@ res.render = function(view, options, fn){
 exports.viewFileName = viewFileName;
 exports.configureModules = function(app) {
     app.set('view engine', 'ejs');
-}
+};

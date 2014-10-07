@@ -27,7 +27,7 @@ exports.load = function(dir, module) {
 
 
     global_less += file_data;
-}
+};
 
 function createCssFile() {
     if(!target_file) {
@@ -40,7 +40,7 @@ function createCssFile() {
     global_less = global_less.split('\\').join('/');
     less.render(global_less, {compress: true}, function (e, data) {
         if(e) {
-            return console.error("Less error: ", e)
+            return console.error("Less error: ", e);
         }
         fse.writeFileSync(file, data);
     });
@@ -49,7 +49,7 @@ function createCssFile() {
 exports.configureBeforeLaunch = function() {
     console.log("Creating LESS...");
     createCssFile();
-}
+};
 exports.createCssFile = createCssFile;
 
 var Urls = include('Core/Urls');
@@ -57,6 +57,6 @@ var Config = include('Core/Config');
 exports.configureModules = function(app) {
     Urls.addUrl('urlMainCss', function()
     {
-        return Config.server.urlcontent + Config.less_main_files.url
+        return Config.server.urlcontent + Config.less_main_files.url;
     });
-}
+};

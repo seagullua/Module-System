@@ -63,8 +63,8 @@ exports.load = function(dir, module) {
     var prefix = Config.js_files.url + '/' + module.getName() + '/';
     return function(url) {
         return prefix + url;
-    }
-}
+    };
+};
 
 exports.name = 'js';
 exports.configureModules = function(app) {
@@ -79,4 +79,4 @@ exports.configureModules = function(app) {
             }
         });
     }
-}
+};

@@ -6,4 +6,4 @@ exports.load = function(dir) {
     for(var key in data) {
         Urls.addUrl(key, data[key]);
     }
-}
+};
