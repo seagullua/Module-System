@@ -81,7 +81,6 @@ var mongoose = require('mongoose');
 exports.configureBeforeLaunch = function() {
     for(var id in schemes) {
         var schema = schemes[id];
-
         schema.model = mongoose.model(schema.name, schema.schema);
     }
 };
