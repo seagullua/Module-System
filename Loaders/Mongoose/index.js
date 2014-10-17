@@ -9,6 +9,10 @@
 
 var schemes = [];
 
+var Config = include('Core/Config');
+
+
+
 function isModel(name) {
     var first = name[0];
     return first.toLowerCase() != first;
@@ -83,4 +87,15 @@ exports.configureBeforeLaunch = function() {
         var schema = schemes[id];
         schema.model = mongoose.model(schema.name, schema.schema);
     }
+
+    mongoose.connect('mongodb://'+Config.dbSettings.host+'/'+Config.dbSettings.db);
+    var db = mongoose.connection;
+
+    db.on('error', function (err) {
+        console.log('connection error:', err.message);
+    });
+
+    db.once('open', function callback () {
+        console.log("Connected to DB!");
+    });
 };
