@@ -145,6 +145,7 @@ function Module(dir, module_name) {
                                 name = loader.name;
                             }
                         } else {
+                            console.log(full_path);
                             loaded = default_loader.load(full_path, me);
                         }
                         if(loaded) {
