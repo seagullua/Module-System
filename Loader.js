@@ -146,7 +146,9 @@ function Module(dir, module_name) {
                             }
                         } else {
                             //console.log(full_path);
-                            loaded = default_loader.load(full_path, me);
+                            if(default_loader) {
+                                loaded = default_loader.load(full_path, me);
+                            }
                         }
                         if(loaded) {
                             functions[name] = loaded;

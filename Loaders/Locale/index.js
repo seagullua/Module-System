@@ -35,7 +35,7 @@ var Config = include("Core/Config");
 var fse = require('fs-extra');
 var path = require('path');
 
-exports.load = function(dir) {
+exports.load = function(dir, module) {
     var cache = new TranslationCache();
 
     var supported_localed = Config.locale.supported;
@@ -49,5 +49,7 @@ exports.load = function(dir) {
     }
 
     cache.exportLocale(i18n.locales);
+    var Locale = include("Core/Locale");
+    Locale.addModuleLocale(module.getName(), cache);
 };
 exports.name = "locale";
