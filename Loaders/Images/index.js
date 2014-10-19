@@ -30,7 +30,7 @@ exports.load = function(dir, module) {
     var prefix = Config.server.urlcontent + Config.images_files.url + '/' + module.getName() + '/';
     return function(url) {
         return prefix + url;
-    }
-}
+    };
+};
 
 exports.name = 'file';

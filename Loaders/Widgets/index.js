@@ -34,7 +34,7 @@ function wrapFunction(old_function, module) {
             }
         }
         return res;
-    }
+    };
 }
 
 /**
@@ -59,4 +59,4 @@ exports.configureModules = function(app) {
 
     //Create widget function for rendering widget
     app.locals.widget = widget;
-}
+};

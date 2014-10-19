@@ -39,7 +39,7 @@ exports.load = function(dir, module) {
         if(schema.name && schema.schema) {
             var func = function() {
                 return schema.model;
-            }
+            };
             func.schema = schema.schema;
             func.name = schema.name;
             func.add = function(option) {

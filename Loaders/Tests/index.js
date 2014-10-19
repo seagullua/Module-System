@@ -13,4 +13,4 @@ exports.load = function(dir, module) {
         var js = path.join(dir, files[i]);
         Tests.addTest(module.getName(), js);
     }
-}
+};
