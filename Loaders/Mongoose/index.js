@@ -82,10 +82,49 @@ exports.name = 'db';
 
 
 var mongoose = require('mongoose');
+
+/**
+ * Saves the schema for future view
+ * @param name
+ * @param schema
+ */
+function saveDebugSchema(name, schema) {
+    var cache = [];
+
+    function fix_circular(key, value) {
+        if (typeof value === 'object' && value !== null) {
+            if (cache.indexOf(value) !== -1) {
+                // Circular reference found, discard key
+                return;
+            }
+            // Store value in our collection
+            cache.push(value);
+        }
+        //Nested schemas export
+        if(Array.isArray(value)) {
+            if(value.length == 1 && 'tree' in value[0]) {
+                return [value[0].tree];
+            }
+            return null;
+        }
+        return value;
+    }
+
+    var file_name = path.join(Config.rootPath, Config.dbSettings.debug.schemasFolder, name+".json");
+
+    console.log(name, schema.tree);
+    fs.writeFile(file_name, JSON.stringify(schema.tree, fix_circular, 4));
+}
+
 exports.configureBeforeLaunch = function() {
+    var schemas_debug_enabled = Config.dbSettings.debug.generateSchemas;
+
     for(var id in schemes) {
         var schema = schemes[id];
         schema.model = mongoose.model(schema.name, schema.schema);
+        if(schemas_debug_enabled) {
+            saveDebugSchema(schema.name, schema.schema);
+        }
     }
 
     mongoose.connect('mongodb://'+Config.dbSettings.host+'/'+Config.dbSettings.db);
