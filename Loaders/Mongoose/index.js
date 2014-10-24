@@ -112,7 +112,7 @@ function saveDebugSchema(name, schema) {
 
     var file_name = path.join(Config.rootPath, Config.dbSettings.debug.schemasFolder, name+".json");
 
-    console.log(name, schema.tree);
+    //console.log(name, schema.tree);
     fs.writeFile(file_name, JSON.stringify(schema.tree, fix_circular, 4));
 }
 
