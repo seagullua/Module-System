@@ -7,6 +7,8 @@ var less = require('less');
 var config = include('Core/Config');
 var global_less = '';
 var target_file;
+var main_css = '';
+
 exports.load = function(dir, module) {
 
     if(!target_file) {
@@ -42,6 +44,7 @@ function createCssFile() {
         if(e) {
             return console.error("Less error: ", e);
         }
+        main_css = data;
         fse.writeFileSync(file, data);
     });
 }
@@ -51,6 +54,9 @@ exports.configureBeforeLaunch = function() {
     createCssFile();
 };
 exports.createCssFile = createCssFile;
+exports.getMainCss = function() {
+    return main_css;
+};
 
 var Urls = include('Core/Urls');
 var Config = include('Core/Config');
