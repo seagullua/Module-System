@@ -50,22 +50,27 @@ exports.load = function(dir, module) {
                     previous_time = fs.readFileSync(time_file).toString();
                 }
 
-                if(previous_time != modify_time) {
-                    console.log("    JS: ", js, previous_time, modify_time);
-                    var result = UglifyJS.minify(source_path, {
-                        outSourceMap: map_name
-                    });
-                    fse.writeFileSync(path.join(target_path, js), result.code);
-                    //console.log(result.map);
-                    if(is_development) {
-                        var map = JSON.parse(result.map);
-                        var output_name = debugJSUrl(module.getName(), js);
-                        debug_files[output_name] = fse.readFileSync(source_path);
-                        map.sources = [Config.server.url + output_name];
-                        fse.writeFileSync(path.join(target_path, map_name), JSON.stringify(map));
+                if(Config.js_files.raw) {
+                    fse.writeFileSync(path.join(target_path, js), fse.readFileSync(source_path));
+                } else {
+                    if(previous_time != modify_time) {
+                        console.log("    JS: ", js, previous_time, modify_time);
+                        var result = UglifyJS.minify(source_path, {
+                            outSourceMap: map_name
+                        });
+                        fse.writeFileSync(path.join(target_path, js), result.code);
+                        //console.log(result.map);
+                        if(is_development) {
+                            var map = JSON.parse(result.map);
+                            var output_name = debugJSUrl(module.getName(), js);
+                            debug_files[output_name] = fse.readFileSync(source_path);
+                            map.sources = [Config.server.url + output_name];
+                            fse.writeFileSync(path.join(target_path, map_name), JSON.stringify(map));
+                        }
+                        fs.writeFileSync(time_file, modify_time);
                     }
-                    fs.writeFileSync(time_file, modify_time);
                 }
+
             } else {
                 fse.copySync(path.join(dir, js), path.join(target_path, js));
             }
