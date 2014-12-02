@@ -9,15 +9,8 @@ var global_less = '';
 var target_file;
 var main_css = '';
 
-exports.load = function(dir, module) {
-
-    if(!target_file) {
-        target_file =  path.join(module.getRootPath(), config.less_main_files.path);
-    }
-
+function lessForFilesList(file_names, file_disk) {
     var file_data = '';
-    var file_disk = dir;
-    var file_names = fs.readdirSync(file_disk);
     for(var i=0; i<file_names.length; i++) {
         var name = file_names[i];
         if(path.extname(name) == ".less") {
@@ -27,8 +20,20 @@ exports.load = function(dir, module) {
         }
     }
 
+    return file_data;
+}
 
-    global_less += file_data;
+exports.load = function(dir, module) {
+
+    if(!target_file) {
+        target_file =  path.join(module.getRootPath(), config.less_main_files.path);
+    }
+
+
+    var file_disk = dir;
+    var file_names = fs.readdirSync(file_disk);
+
+    global_less += lessForFilesList(file_names, file_disk);
 };
 
 function createCssFile() {
@@ -38,6 +43,11 @@ function createCssFile() {
     var file = target_file;
     var dir = path.dirname(file);
     fse.ensureDirSync(dir);
+
+    if(Config.less && Config.less.pre_include) {
+        var list = Config.less.pre_include;
+        global_less = lessForFilesList(list, Config.rootPath) + global_less;
+    }
 
     global_less = global_less.split('\\').join('/');
     less.render(global_less, {compress: true}, function (e, data) {
