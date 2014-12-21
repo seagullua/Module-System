@@ -28,6 +28,11 @@ exports.load = function(dir, module) {
     });
 
     var prefix = Config.server.urlcontent + Config.images_files.url + '/' + module.getName() + '/';
+    module.getFunctions().frontendFile = function(){
+        return '<script>' +
+            'window.file = function(url){ return "'+prefix+'" + url;}' +
+            '</script>'
+    };
     return function(url) {
         return prefix + url;
     };
