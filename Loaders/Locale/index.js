@@ -35,8 +35,34 @@ var Config = include("Core/Config");
 var fse = require('fs-extra');
 var path = require('path');
 
+function initFrontend() {
+    window.__ = function(tag) {
+        if(tag in window.__store) {
+            return window.__store[tag];
+        } else {
+            console.error("No translation", tag);
+            return tag;
+        }
+    };
+    window.__store = {};
+}
+
+function frontendEmbed(cache, locale) {
+    var lang = cache[locale];
+    if(!lang) {
+        lang = {};
+    }
+    var source = (initFrontend.toString());
+    return '<script>' +
+        '(' + source + '());' +
+        'window.__store = ' + JSON.stringify(lang) + ";" +
+        '</script>';
+}
+
 exports.load = function(dir, module) {
     var cache = new TranslationCache();
+
+
 
     var supported_localed = Config.locale.supported;
     for(var i=0; i<supported_localed.length; ++i) {
@@ -49,6 +75,13 @@ exports.load = function(dir, module) {
     }
 
     cache.exportLocale(i18n.locales);
+    var locales = {};
+    cache.exportLocale(locales);
+
+    module.getFunctions().frontendLocale = function(locale) {
+        return frontendEmbed(locales, locale);
+    };
+
     var Locale = include("Core/Locale");
     Locale.addModuleLocale(module.getName(), cache);
 };
