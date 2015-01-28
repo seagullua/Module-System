@@ -235,7 +235,7 @@ function makeVerbose() {
 }
 
 function load() {
-    default_loader = include('System/Loaders/Default');
+    default_loader = include('System/Loaders/None');
     setPathLoader('_', 'System/Loaders/None');
 
 }
