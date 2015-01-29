@@ -12,6 +12,31 @@ var schemes = [];
 var Config = include('Core/Config');
 
 
+/**
+ * Changes JSON to update only attributes mentioned in JSON
+ * @param json
+ * @returns {{$set: {}}}
+ */
+function prepareForDeepUpdate(json) {
+
+    var result = {};
+    function processNode(prefix, node) {
+        if(typeof node != "object") {
+            result[prefix] = node;
+        } else {
+            for(var key in node) {
+                var subprefix = prefix ? prefix + "." + key : key;
+                processNode(subprefix, node[key]);
+            }
+        }
+
+    }
+
+    processNode('', json);
+
+    return {$set: result};
+}
+
 
 function isModel(name) {
     var first = name[0];
@@ -62,6 +87,8 @@ exports.load = function(dir, module) {
             }
         });
     }
+
+    db_object.prepareForDeepUpdate = prepareForDeepUpdate;
 
     var files = fs.readdirSync(dir);
     for(var i=0; i<files.length; ++i) {
