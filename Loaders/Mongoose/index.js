@@ -21,7 +21,7 @@ function prepareForDeepUpdate(json) {
 
     var result = {};
     function processNode(prefix, node) {
-        if(typeof node != "object") {
+        if(typeof node != "object" || node instanceof Date) {
             result[prefix] = node;
         } else {
             for(var key in node) {
