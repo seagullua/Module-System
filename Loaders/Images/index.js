@@ -33,9 +33,19 @@ exports.load = function(dir, module) {
             'window.file = function(url){ return "'+prefix+'" + url;}' +
             '</script>'
     };
-    return function(url) {
+    var fn = function(url) {
         return prefix + url;
     };
+
+    var email_prefix = prefix;
+    if(email_prefix.substr(0, 4) != "http") {
+        email_prefix = "http:" + email_prefix;
+    }
+    fn.email = function(url) {
+        return email_prefix + url;
+    };
+
+    return fn;
 };
 
 exports.name = 'file';
